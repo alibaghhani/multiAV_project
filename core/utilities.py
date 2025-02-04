@@ -11,3 +11,5 @@ def calculate_file_hash(file_path: str) -> str:
 
 
 
+def get_file_size(file_path: str)->int:
+    return Path(file_path).stat().st_size
