@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
-
+from .managers import ScanFileManager
 from core.models import CommonItems
 
 
@@ -12,6 +12,8 @@ class ScanFile(CommonItems):
     file_size = models.BigIntegerField()
     status = models.IntegerField(choices=CommonItems.RESULT_CHOICES)
     name = models.CharField(max_length=255)
+
+    objects = ScanFileManager()
 
     def __str__(self):
         return f'{self.sha_256}-----{self.name}'
