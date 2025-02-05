@@ -2,16 +2,18 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
+
+from core.utilities import get_file_size, calculate_file_hash
 from .managers import ScanFileManager
 from core.models import CommonItems
 
 
 class ScanFile(CommonItems):
     file = models.FileField()
-    sha_256 = models.CharField(max_length=64, unique=True)
-    file_size = models.BigIntegerField()
-    status = models.IntegerField(choices=CommonItems.RESULT_CHOICES)
-    name = models.CharField(max_length=255)
+    sha_256 = models.CharField(max_length=64, null=True, blank=True)
+    file_size = models.BigIntegerField( null=True, blank=True)
+    status = models.IntegerField(choices=CommonItems.RESULT_CHOICES, null=True, blank=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
 
     objects = ScanFileManager()
 
