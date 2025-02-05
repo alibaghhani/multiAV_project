@@ -1,2 +1,8 @@
 .idea/**
 .venv
+media/
+db.sqlite3
+core/__pycache__/
+multiav_project/__pycache__/
+scanner/migrations/__pycache__/
+scanner/__pycache__/
