@@ -5,11 +5,11 @@ from .views import ScanView
 
 router = DefaultRouter()
 router.register(
-    'scan',
+    'file',
     ScanView,
-    'scan'
+    'file'
 )
 
 urlpatterns = [
 
-] + router.urls
+] + router.urlsST
