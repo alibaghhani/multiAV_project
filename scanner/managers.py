@@ -5,7 +5,16 @@ from django.db import models
 
 class ScanFileManager(models.Manager):
     def create(self, **kwargs):
-        kwargs['sha_256'] = calculate_file_hash(str(kwargs['file']))
         kwargs['name'] = str(kwargs['file'])
-        kwargs['file_size'] = get_file_size(settings.MEDIA_ROOT + str(kwargs['file']))
-        return super().create(**kwargs)
+
+
+        instance = super().create(**kwargs)
+
+        file_path = instance.file.path
+
+        instance.sha_256 = calculate_file_hash(file_path)
+
+        instance.file_size = get_file_size(file_path)
+
+        instance.save(update_fields=['sha_256', 'name', 'file_size'])
+        return instance
