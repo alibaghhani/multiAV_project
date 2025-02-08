@@ -12,4 +12,4 @@ router.register(
 
 urlpatterns = [
 
-] + router.urlsST
+] + router.urls
