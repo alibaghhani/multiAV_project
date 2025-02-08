@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
-from distutils.dir_util import remove_tree
-from typing import Type
-from decouple import config
-from django.core.files import File
+import requests
 
 
 class AbstractAntivirus(ABC):
@@ -31,5 +28,21 @@ class AbstractAntivirus(ABC):
     def get_results(self):
         """
         return results.json
+
+        """
+
+    @abstractmethod
+    def authenticate(self, **kwargs):
+        """
+        handle authentication method of each subclass
+
+        """
+
+
+    @abstractmethod
+    def save_report(self,
+                    response: dict):
+        """
+        handles saving reports
 
         """
