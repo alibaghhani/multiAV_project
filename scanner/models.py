@@ -33,12 +33,10 @@ class Scan(CommonItems):
     status = models.IntegerField(choices=STATUS_CHOICES)
     av_name = models.CharField(max_length=255, unique=True)
     file = models.ForeignKey('ScanFile', on_delete=models.CASCADE, related_name='scan')
-    tracking_id = models.BigIntegerField()
-    short_result = models.IntegerField(choices=CommonItems.RESULT_CHOICES)
-    final_result = models.JSONField()
     tracking_id = models.BigIntegerField(null=True)
     short_result = models.IntegerField(choices=CommonItems.RESULT_CHOICES, null=True)
     final_result = models.JSONField(null=True)
+    checked_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     def __str__(self):
         return f"Tracking ID: {self.tracking_id}"
