@@ -36,6 +36,9 @@ class Scan(CommonItems):
     tracking_id = models.BigIntegerField()
     short_result = models.IntegerField(choices=CommonItems.RESULT_CHOICES)
     final_result = models.JSONField()
+    tracking_id = models.BigIntegerField(null=True)
+    short_result = models.IntegerField(choices=CommonItems.RESULT_CHOICES, null=True)
+    final_result = models.JSONField(null=True)
 
     def __str__(self):
         return f"Tracking ID: {self.tracking_id}"
