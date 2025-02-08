@@ -38,4 +38,4 @@ class ScanFileCreateSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_link(obj):
         link = urlparse('http://127.0.0.1:8000/api/file/')
-        return link.path + obj.sha_256
+        return urljoin(link.path, f'{obj.sha_256}/')
