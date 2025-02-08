@@ -24,22 +24,6 @@ class AbstractAntivirus(ABC):
             raise ValueError("file id cant be empty")
         self.get_results()
 
-    def set_header(self):
-        api_key = config(self.__class__.__name__)
-
-        if self.CONTENT_TYPE:
-            return {
-                "accept": "application/json",
-                self.HEADER_KEY_NAME: api_key,
-                "content-type": self.CONTENT_TYPE
-            }
-        else:
-            return {
-
-                "accept": "application/json",
-                self.HEADER_KEY_NAME: api_key
-            }
-
     @abstractmethod
     def upload_file(self):
         """
