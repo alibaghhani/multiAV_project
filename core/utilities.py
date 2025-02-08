@@ -1,6 +1,6 @@
 import hashlib
 from pathlib import Path
-
+from functools import reduce
 import requests
 
 
@@ -42,3 +42,13 @@ def request(url, files=None, post: bool = False, **kwargs):
 
     return requests.get(url=url,
                         **kwargs)
+
+
+
+def get_nested_value(data, route):
+    """Access nested dictionary value dynamically using dot notation."""
+    keys = route.split('.')
+    try:
+        return reduce(lambda d, key: d[key], keys, data)
+    except (KeyError, TypeError):
+        return None
