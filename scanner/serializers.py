@@ -1,12 +1,10 @@
-from urllib.parse import urlparse
-
+from urllib.parse import urlparse, urljoin
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
 
 from core.utilities import calculate_file_hash
-from .models import ScanFile
-
+from .models import ScanFile, Scan
 
 class ScanFileCreateSerializer(serializers.ModelSerializer):
     file_hash = serializers.SerializerMethodField()
@@ -26,9 +24,10 @@ class ScanFileCreateSerializer(serializers.ModelSerializer):
         file_hash = calculate_file_hash(file)
 
         try:
-            return get_object_or_404(ScanFile, sha_256=file_hash)
-        except Http404:
+            return ScanFile.objects.get(sha_256=file_hash)
+        except Exception:
             scan_file = ScanFile.objects.create(**validated_data)
+            Scan.objects.bulk_create_scan_for_av_in_avs(scan_file)
             return scan_file
 
     @staticmethod
