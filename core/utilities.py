@@ -4,7 +4,14 @@ from pathlib import Path
 import requests
 
 
-def calculate_file_hash(uploaded_file)->str:
+def calculate_file_hash(uploaded_file) -> str:
+    """
+
+    :param uploaded_file:
+    :return:
+        file hash
+    """
+
     hash_obj = hashlib.sha256()
 
     for chunk in uploaded_file.chunks():
@@ -12,7 +19,14 @@ def calculate_file_hash(uploaded_file)->str:
 
     return hash_obj.hexdigest()
 
+
 def get_file_size(file_path: str) -> int:
+    """
+
+    :param file_path:
+    :return:
+        file size
+    """
     return Path(file_path).stat().st_size
 
 
