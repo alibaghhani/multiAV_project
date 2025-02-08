@@ -5,10 +5,10 @@ import requests
 class AbstractAntivirus(ABC):
 
     def __init__(self,
-                 file,
+                 file_hash,
                  ):
 
-        self._file = file
+        self._file_hash = file_hash
         self._file_id = None
 
     def scan(self):
