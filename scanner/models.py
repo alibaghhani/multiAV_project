@@ -1,11 +1,8 @@
-from django.db import models
-
 # Create your models here.
 from django.db import models
 
-from core.utilities import get_file_size, calculate_file_hash
-from .managers import ScanFileManager
 from core.models import CommonItems
+from .managers import ScanFileManager, ScanManager
 
 
 class ScanFile(CommonItems):
@@ -29,6 +26,7 @@ class Scan(CommonItems):
         (4, 'NOTIFIED')
     )
 
+    objects = ScanManager()
 
     status = models.IntegerField(choices=STATUS_CHOICES)
     av_name = models.CharField(max_length=255, unique=True)
