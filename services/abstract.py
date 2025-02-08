@@ -6,13 +6,9 @@ from django.core.files import File
 
 
 class AbstractAntivirus(ABC):
-    UPLOAD_URL = None
-    RESULTS_URL = None
-    HEADER_KEY_NAME = 'x-api-key'
-    CONTENT_TYPE = None
 
     def __init__(self,
-                 file: Type[File],
+                 file,
                  ):
 
         self._file = file
