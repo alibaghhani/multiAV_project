@@ -1,93 +1,64 @@
-import json
+from decouple import config
 
+from scanner.models import ScanFile, Scan
 from services.abstract import AbstractAntivirus
-import requests
+from .tasks import upload_file_to_av
 
 
 class VirusTotal(AbstractAntivirus):
-    UPLOAD_URL = 'https://www.virustotal.com/api/v3/files'
-    RESULTS_URL = 'https://www.virustotal.com/api/v3/files/'
-    CONTENT_TYPE = 'multipart/form-data'
+    URL = 'https://www.virustotal.com/api/v3/'
 
     def upload_file(self):
-
-        response = requests.post(
-            self.UPLOAD_URL,
-            files={'file': self._file},
-            headers=self.set_header()
+        upload_file_to_av.apply_async(
+            kwargs={"url": self.URL,
+                    "file_hash": self._file_hash,
+                    "suffix": "file",
+                    }
         )
-
-        if response.status_code == 200:
-            parsed_response = response.json()
-            self._file_id = parsed_response['data']['id']
-            print(f"Uploaded file ID: {self._file_id}")
-        else:
-            raise Exception(f"File upload failed with status code {response.status_code}: {response.text}")
 
     def get_results(self):
 
         if not self._file_id:
             raise ValueError("File ID is not set, cannot fetch results.")
 
-        response = requests.get(
-            self.RESULTS_URL + self._file_id,
-            headers=self.set_header()
-        )
+        url = self.URL + 'analyses/' + self._file_id
+        response = self.request(url=url)
 
         if response.status_code == 200:
             return response.json()
         else:
             raise Exception(f"Failed to get results with status code {response.status_code}: {response.text}")
 
+    def authenticate(self, **kwargs):
+        headers = kwargs.get("headers", {})
 
+        headers.update({
+            "accept": "application/json",
+            "x-apikey": config(self.__class__.__name__)
+        })
 
-class Kaspersky(AbstractAntivirus):
-    UPLOAD_URL = 'https://opentip.kaspersky.com/api/v1/scan/file'
-    RESULTS_URL = 'https://opentip.kaspersky.com/api/v1/scan/file'
-    CONTENT_TYPE = 'application/octet-stream'
+        kwargs['headers'] = headers
 
-    def upload_file(self):
-        return requests.post(
-            url=self.UPLOAD_URL + f'?filename={self._file.__name__}',
-            headers=self.set_header(),
-            data=self._file
-        ).text
+        return kwargs
 
-    def get_results(self,
-                    file_id=None):
-        return requests.get(self.RESULTS_URL + f'/{file_id}',
-                            headers=self.set_header()).json()
+    def save_report(self,
+                    response: dict):
 
+        if response['data']['status'] == 'queued':
+            return None
 
+        stats = response["data"]["attributes"]["stats"]
 
-class MetaDefender(AbstractAntivirus):
-    UPLOAD_URL = 'https://www.opswat.com/api/scan/file'
-    RESULTS_URL = 'https://www.opswat.com/api/scan/'
-
-    def upload_file(self):
-        response = requests.post(
-            self.UPLOAD_URL,
-            files={'file': self._file},
-            headers=self.set_header()
-        )
-
-        if response.status_code == 200:
-            json_response = response.json()
-            self._file_id = json_response['flow_id']
-            print(f"Uploaded file ID: {self._file_id}")
+        file_instance = ScanFile.objects.get(file=self._file.name).id
+        if stats["malicious"] == 0 and stats["suspicious"] == 0:
+            overall_result = 0
         else:
-            raise Exception(f"File upload failed with status code {response.status_code}: {response.text}")
+            overall_result = 1
 
-    def get_results(self):
-        if not self._file_id:
-            raise ValueError("File ID is not set, cannot fetch results.")
+        full_result = response
 
-        response = requests.get(
-            self.RESULTS_URL + self._file_id + '/report',
-            headers=self.set_header()
-        )
+        Scan.objects.create(file=file_instance,
+                            overall_result=overall_result,
+                            full_result=full_result)
 
-        if response.status_code == 200:
-            return response.json()
-        else:
-            raise Exception(f"Failed to get results with status code {response.status_code}: {response.text}")
+        return True
