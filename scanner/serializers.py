@@ -26,8 +26,9 @@ class ScanFileCreateSerializer(serializers.ModelSerializer):
         try:
             return ScanFile.objects.get(sha_256=file_hash)
         except Exception:
-            scan_file = ScanFile.objects.create(**validated_data)
-            Scan.objects.bulk_create_scan_for_av_in_avs(scan_file)
+            with transaction.atomic():
+                scan_file = ScanFile.objects.create(**validated_data)
+                Scan.objects.bulk_create_scan_for_av_in_avs(scan_file)
             return scan_file
 
     @staticmethod
