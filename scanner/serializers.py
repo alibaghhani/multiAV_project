@@ -4,7 +4,7 @@ from django.http import Http404
 from rest_framework import serializers
 
 from core.utilities import calculate_file_hash
-from .models import ScanFile, Scan
+from .models import ScanFile, Scan;from django.db import transaction
 
 class ScanFileCreateSerializer(serializers.ModelSerializer):
     file_hash = serializers.SerializerMethodField()
@@ -39,3 +39,21 @@ class ScanFileCreateSerializer(serializers.ModelSerializer):
     def get_link(obj):
         link = urlparse('http://127.0.0.1:8000/api/file/')
         return urljoin(link.path, f'{obj.sha_256}/')
+
+
+
+class ScanFileRetrieveSerializer(serializers.ModelSerializer):
+    number_of_scanners = serializers.SerializerMethodField()
+    scanned_with = serializers.SerializerMethodField()
+    class Meta:
+        model = ScanFile
+        fields = 'file', 'sha_256', 'file_size', 'status', 'name', 'number_of_scanners', 'scanned_with'
+
+
+    @staticmethod
+    def get_number_of_scanners(obj):
+        return obj.scan.filter(status=1).count()
+
+    @staticmethod
+    def get_scanned_with(obj):
+        return [scanner.av_name for scanner in obj.scan.all()]
