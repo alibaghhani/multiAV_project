@@ -1,6 +1,5 @@
 # Create your models here.
 from django.db import models
-
 from core.models import CommonItems
 from .managers import ScanFileManager, ScanManager
 
@@ -29,7 +28,7 @@ class Scan(CommonItems):
     objects = ScanManager()
 
     status = models.IntegerField(choices=STATUS_CHOICES)
-    av_name = models.CharField(max_length=255, unique=True)
+    av_name = models.CharField(max_length=255)
     file = models.ForeignKey('ScanFile', on_delete=models.CASCADE, related_name='scan')
     tracking_id = models.BigIntegerField(null=True)
     short_result = models.IntegerField(choices=CommonItems.RESULT_CHOICES, null=True)
