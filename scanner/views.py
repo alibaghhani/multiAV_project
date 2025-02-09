@@ -3,7 +3,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .models import ScanFile
-from .serializers import ScanFileCreateSerializer
+from .serializers import ScanFileCreateSerializer, ScanFileRetrieveSerializer
 
 
 class ScanView(ModelViewSet):
@@ -12,17 +12,24 @@ class ScanView(ModelViewSet):
     queryset = ScanFile.objects.all()
     lookup_field = 'sha_256'
 
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ScanFileRetrieveSerializer
+        return ScanFileCreateSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        try:
-            obj = self.get_queryset().get(sha_256=kwargs['sha_256'])
-            if not obj.status:
-                return Response({"status": "queued"})
-        except ScanFile.DoesNotExist:
-            raise NotFound()
+        sha_256 = self.kwargs.get(self.lookup_field)
 
-        serializer = self.get_serializer(obj)
-        return Response(serializer.data)
+        try:
+            obj = self.get_queryset().get(sha_256=sha_256)
+            if obj.status:
+                serializer = self.get_serializer(obj)
+                return Response(serializer.data)
+            else:
+                return Response({"status": "queued..."})
+
+        except Exception:
+            raise NotFound("object was not found!")
 
     def destroy(self, request, *args, **kwargs):
         raise MethodNotAllowed('not allowed')
