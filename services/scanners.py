@@ -47,24 +47,23 @@ class VirusTotal(AbstractAntivirus):
 
         return kwargs
 
-    def save_report(self,
-                    response: dict):
 
-        if response['data']['status'] == 'queued':
+
+
+    @staticmethod
+    def analysis_report(response: dict):
+
+        try:
+            response['data']['status'] == 'queued'
             return None
+        except KeyError:
+            stats = response["data"]["attributes"]["stats"]
 
-        stats = response["data"]["attributes"]["stats"]
+            if stats["malicious"] == 0 and stats["suspicious"] == 0:
+                overall_result = 0
+            else:
+                overall_result = 1
 
-        file_instance = ScanFile.objects.get(file=self._file.name).id
-        if stats["malicious"] == 0 and stats["suspicious"] == 0:
-            overall_result = 0
-        else:
-            overall_result = 1
 
-        full_result = response
 
-        Scan.objects.create(file=file_instance,
-                            overall_result=overall_result,
-                            full_result=full_result)
-
-        return True
+        return overall_result, response
