@@ -8,3 +8,5 @@ scanner/migrations/__pycache__/
 scanner/__pycache__/
 draft.txt
 services/__pycache__/
+celerybeat-schedule.db
+.env
