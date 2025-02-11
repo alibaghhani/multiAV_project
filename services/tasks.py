@@ -39,4 +39,28 @@ def upload_file_to_virustotal():
 
 
 
+@shared_task(serializer='json')
+def get_file_scan_result_virustotal():
+    scan_file_objs = Scan.objects.select_related(
+        'file').filter(
+        Q(status=2) & Q(
+        av_name='VirusTotal')).order_by(
+        '-checked_at')[:RATE_LIMIT_PERIOD_COUNT]
 
+
+    for scan_file_obj in scan_file_objs:
+        if  scan_file_obj.status == 2:
+            vt_obj = VirusTotal()
+            try:
+                response = vt_obj.get_results(scan_file_obj.tracking_id)
+                if isinstance(response, str):
+                    dict_response = ast.literal_eval(response)
+                dict_response = response
+                scan_file_obj.status =  3
+                scan_file_obj.short_result, scan_file_obj.final_result = vt_obj.analysis_report(dict_response)
+                scan_file_obj.save()
+            except GetFileResultError:
+                continue
+
+        else:
+            break
