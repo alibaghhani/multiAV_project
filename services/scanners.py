@@ -1,5 +1,5 @@
 from decouple import config
-from core.exceptions import FileUploadError
+from core.exceptions import FileUploadError, GetFileResultError
 from scanner.models import ScanFile, Scan
 from services.abstract import AbstractAntivirus
 
@@ -8,10 +8,10 @@ from services.abstract import AbstractAntivirus
 class VirusTotal(AbstractAntivirus):
     URL = 'https://www.virustotal.com/api/v3/'
 
-    def upload_file(self):
+    def upload_file(self, file):
 
         response = self.request(url=self.URL + 'files',
-                                files={'file': self._file},
+                                files={'file': file},
                                 post=True)
 
         if response.status_code == 200:
@@ -22,18 +22,18 @@ class VirusTotal(AbstractAntivirus):
             raise FileUploadError(f"File upload failed with status code {response.status_code}: {response.text}")
 
 
-    def get_results(self):
+    def get_results(self, tracking_id):
 
-        if not self._file_id:
+        if not tracking_id:
             raise ValueError("File ID is not set, cannot fetch results.")
 
-        url = self.URL + 'analyses/' + self._file_id
+        url = self.URL + 'analyses/' + tracking_id
         response = self.request(url=url)
 
         if response.status_code == 200:
             return response.json()
         else:
-            raise Exception(f"Failed to get results with status code {response.status_code}: {response.text}")
+            raise GetFileResultError(f"Failed to get results with status code {response.status_code}: {response.text}")
 
     def authenticate(self, **kwargs):
         headers = kwargs.get("headers", {})
