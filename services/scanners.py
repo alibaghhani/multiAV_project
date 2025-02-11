@@ -1,20 +1,26 @@
 from decouple import config
-
+from core.exceptions import FileUploadError
 from scanner.models import ScanFile, Scan
 from services.abstract import AbstractAntivirus
-from .tasks import upload_file_to_av
+
 
 
 class VirusTotal(AbstractAntivirus):
     URL = 'https://www.virustotal.com/api/v3/'
 
     def upload_file(self):
-        upload_file_to_av.apply_async(
-            kwargs={"url": self.URL,
-                    "file_hash": self._file_hash,
-                    "suffix": "file",
-                    }
-        )
+
+        response = self.request(url=self.URL + 'files',
+                                files={'file': self._file},
+                                post=True)
+
+        if response.status_code == 200:
+            parsed_response = response.json()
+            tracking_id = parsed_response['data']['id']
+            return tracking_id
+        else:
+            raise FileUploadError(f"File upload failed with status code {response.status_code}: {response.text}")
+
 
     def get_results(self):
 
