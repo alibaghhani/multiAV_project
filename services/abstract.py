@@ -4,11 +4,6 @@ import requests
 
 class AbstractAntivirus(ABC):
 
-    def __init__(self,
-                 file,
-                 ):
-        self._file = file
-
     def scan(self):
         self.upload_file()
         if not self._file_id:
@@ -31,14 +26,14 @@ class AbstractAntivirus(ABC):
 
 
     @abstractmethod
-    def upload_file(self):
+    def upload_file(self, file):
         """
         request.post("file").data(data)
 
         """
 
     @abstractmethod
-    def get_results(self):
+    def get_results(self, tracking_id):
         """
         return results.json
 
@@ -51,12 +46,11 @@ class AbstractAntivirus(ABC):
 
         """
 
-
+    @staticmethod
     @abstractmethod
-    def save_report(self,
-                    response: dict):
+    def analysis_report(response: str):
         """
-        handles saving reports
-
+        Handles saving reports
         """
+        pass
 
