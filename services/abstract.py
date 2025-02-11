@@ -5,17 +5,30 @@ import requests
 class AbstractAntivirus(ABC):
 
     def __init__(self,
-                 file_hash,
+                 file,
                  ):
-
-        self._file_hash = file_hash
-        self._file_id = None
+        self._file = file
 
     def scan(self):
         self.upload_file()
         if not self._file_id:
             raise ValueError("file id cant be empty")
         self.get_results()
+
+    def request(self, url, files=None, post: bool = False, ):
+        """
+        handle request based on its type (post/get)
+
+        """
+        if post:
+            return requests.post(url=url,
+                                 files=files,
+                                 **self.authenticate())
+        else:
+            return requests.get(url=url,
+                                **self.authenticate())
+
+
 
     @abstractmethod
     def upload_file(self):
@@ -46,3 +59,4 @@ class AbstractAntivirus(ABC):
         handles saving reports
 
         """
+
