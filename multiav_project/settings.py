@@ -153,6 +153,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'services.tasks.upload_file_to_virustotal',
         'schedule': crontab(minute="*/1")
     },
+    'run_get_result_task_every_minute': {
+        'task': 'services.tasks.get_file_scan_result_virustotal',
+        'schedule': crontab(minute="*/1")
+    },
 }
 
 RATE_LIMIT_PERIOD_COUNT = 2
