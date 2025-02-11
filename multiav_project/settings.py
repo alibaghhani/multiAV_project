@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from celery.schedules import crontab
 from services.av_settings import AVS
 from pathlib import Path
 
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'scanner.apps.ScannerConfig',
     'services',
-    'core'
+    'core',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -138,9 +140,19 @@ MEDIA_URL = '/media/'
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
-CELERY_TIMEZONE = "Iran/Tehran"
+TIME_ZONE = "Asia/Tehran"
+USE_TZ = True
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 
 COUNT_OF_SCANNERS = len(AVS)
+
+CELERY_BEAT_SCHEDULE = {
+    'run_upload_task_every_minute': {
+        'task': 'services.tasks.upload_file_to_virustotal',
+        'schedule': crontab(minute="*/1")
+    },
+}
+
+RATE_LIMIT_PERIOD_COUNT = 2
