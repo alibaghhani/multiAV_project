@@ -1,6 +1,6 @@
 from decouple import config
+
 from core.exceptions import FileUploadError, GetFileResultError
-from scanner.models import ScanFile, Scan
 from services.abstract import AbstractAntivirus
 
 
@@ -53,17 +53,22 @@ class VirusTotal(AbstractAntivirus):
     @staticmethod
     def analysis_report(response: dict):
 
-        try:
-            response['data']['status'] == 'queued'
+        status = response.get('data', {}).get('status')
+        if status == 'queued':
             return None
-        except KeyError:
+
+        try:
             stats = response["data"]["attributes"]["stats"]
 
             if stats["malicious"] == 0 and stats["suspicious"] == 0:
-                overall_result = 0
+                overall_result = 'clean'
             else:
-                overall_result = 1
+                overall_result = 'infected'
+
+            return overall_result, response
+
+        except KeyError:
+            return None
 
 
 
-        return overall_result, response
