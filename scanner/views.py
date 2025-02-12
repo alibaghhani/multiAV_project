@@ -1,3 +1,5 @@
+from types import NoneType
+
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -22,7 +24,7 @@ class ScanView(ModelViewSet):
 
         try:
             obj = self.get_queryset().get(sha_256=sha_256)
-            if obj.status:
+            if not isinstance(obj.status, NoneType):
                 serializer = self.get_serializer(obj)
                 return Response(serializer.data)
             else:
