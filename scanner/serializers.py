@@ -1,5 +1,4 @@
 from urllib.parse import urlparse, urljoin
-from django.http import Http404
 
 from rest_framework import serializers
 
@@ -57,3 +56,13 @@ class ScanFileRetrieveSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_scanned_with(obj):
         return [scanner.av_name for scanner in obj.scan.all()]
+
+
+
+
+
+class ScanListSerializer(serializers.ModelSerializer):
+    """Serializer for listing all scans with only av_name and short_result."""
+    class Meta:
+        model = Scan
+        fields = ["av_name", "short_result"]
