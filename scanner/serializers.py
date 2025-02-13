@@ -66,3 +66,9 @@ class ScanListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Scan
         fields = ["av_name", "short_result"]
+
+class ScanDetailSerializer(serializers.ModelSerializer):
+    """Serializer for retrieving a single scan's full final_result."""
+    class Meta:
+        model = Scan
+        fields = ["av_name", "final_result"]
