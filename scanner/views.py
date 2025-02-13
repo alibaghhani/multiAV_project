@@ -8,7 +8,7 @@ from .models import ScanFile
 from .serializers import ScanFileCreateSerializer, ScanFileRetrieveSerializer
 
 
-class ScanView(ModelViewSet):
+class ScanFileViewSet(ModelViewSet):
     model = ScanFile
     serializer_class = ScanFileCreateSerializer
     queryset = ScanFile.objects.all()
