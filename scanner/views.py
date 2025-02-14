@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from .models import ScanFile, Scan
 from .serializers import ScanFileCreateSerializer, ScanFileRetrieveSerializer, ScanDetailSerializer, ScanListSerializer
-
+from drf_yasg.utils import swagger_auto_schema
 
 class ScanFileViewSet(ModelViewSet):
     model = ScanFile
@@ -32,10 +32,17 @@ class ScanFileViewSet(ModelViewSet):
         except Exception:
             raise NotFound("object was not found!")
 
+
+    @swagger_auto_schema(auto_schema=None)
     def destroy(self, request, *args, **kwargs):
         raise MethodNotAllowed('not allowed')
 
+    @swagger_auto_schema(auto_schema=None)
     def update(self, request, *args, **kwargs):
+        raise MethodNotAllowed('not allowed')
+
+    @swagger_auto_schema(auto_schema=None)
+    def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed('not allowed')
 
 
