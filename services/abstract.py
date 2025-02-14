@@ -3,12 +3,17 @@ import requests
 
 
 class AbstractAntivirus(ABC):
+    """
+    base Antivirus class other antiviruses must be implemented from this class
 
-    def scan(self):
-        self.upload_file()
-        if not self._file_id:
-            raise ValueError("file id cant be empty")
-        self.get_results()
+    abstract methods:
+            upload_file
+            get_results
+            authenticate
+            analysis_report
+
+    """
+
 
     def request(self, url, files=None, post: bool = False, ):
         """

@@ -12,6 +12,12 @@ RATE_LIMIT_PERIOD_COUNT = getattr(settings, "RATE_LIMIT_PERIOD_COUNT", 2)
 
 @shared_task(serializer='json')
 def upload_file_to_virustotal():
+    """
+    task uploads file to target scanner
+    this action may take some time
+    so files must be on a queue to upload
+
+    """
     manager = ScanManager('VirusTotal')
     for scan_obj in manager.get_scan_records(status=1):
         try:
@@ -29,6 +35,12 @@ def upload_file_to_virustotal():
 
 @shared_task(serializer='json')
 def get_file_scan_result_virustotal():
+    """
+    task get file's results from target scanner
+    this action may take some time
+    so files must be on a queue to upload
+
+    """
     manager = ScanManager('VirusTotal')
     file_manager = FileManager()
 

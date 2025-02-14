@@ -6,10 +6,13 @@ from services.abstract import AbstractAntivirus
 
 
 class VirusTotal(AbstractAntivirus):
+    """
+    Antivirus class for VirusTotal service all methods were implemented based on VirusTotal docs
+
+    """
     URL = 'https://www.virustotal.com/api/v3/'
 
     def upload_file(self, file):
-
         response = self.request(url=self.URL + 'files',
                                 files={'file': file},
                                 post=True)

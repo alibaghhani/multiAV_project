@@ -19,6 +19,14 @@ class ScanFileViewSet(ModelViewSet):
         return ScanFileCreateSerializer
 
     def retrieve(self, request, *args, **kwargs):
+        """
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+            after calculating file's hash if file has status so return file if not return {"status":"queued..."}
+        """
         sha_256 = self.kwargs.get(self.lookup_field)
 
         try:
