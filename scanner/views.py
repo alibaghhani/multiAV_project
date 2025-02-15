@@ -1,6 +1,6 @@
 from types import NoneType
 
-from rest_framework import mixins
+from rest_framework import mixins, status
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -37,9 +37,9 @@ class ScanFileViewSet(mixins.CreateModelMixin,
             obj = self.get_queryset().get(sha_256=sha_256)
             if not isinstance(obj.status, NoneType):
                 serializer = self.get_serializer(obj)
-                return Response(serializer.data)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response({"status": "queued..."})
+                return Response({"status": "queued..."}, status=status.HTTP_202_ACCEPTED)
 
         except Exception:
             raise NotFound("object was not found!")
@@ -68,6 +68,6 @@ class ScanViewSet(ReadOnlyModelViewSet):
         try:
             scan = Scan.objects.get(file__sha_256=sha_256, av_name=av_name)
             serializer = self.get_serializer(scan)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Scan.DoesNotExist:
             raise NotFound(f"No scan found for {av_name}")
