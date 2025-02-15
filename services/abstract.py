@@ -24,9 +24,9 @@ class AbstractAntivirus(ABC):
             return requests.post(url=url,
                                  files=files,
                                  **self.authenticate())
-        else:
-            return requests.get(url=url,
-                                **self.authenticate())
+
+        return requests.get(url=url,
+                            **self.authenticate())
 
 
 
