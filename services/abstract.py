@@ -17,7 +17,7 @@ class AbstractAntivirus(ABC):
 
     def request(self, url, files=None, post: bool = False, ):
         """
-        handle request based on its type (post/get)
+        handle request to AntiVirus based on its type (post/get)
 
         """
         if post:
@@ -33,6 +33,7 @@ class AbstractAntivirus(ABC):
     @abstractmethod
     def upload_file(self, file):
         """
+        upload file to Antivirus
         request.post("file").data(data)
 
         """
@@ -40,6 +41,7 @@ class AbstractAntivirus(ABC):
     @abstractmethod
     def get_results(self, tracking_id):
         """
+        get result from AntiVirus
         return results.json
 
         """
@@ -55,7 +57,7 @@ class AbstractAntivirus(ABC):
     @abstractmethod
     def analysis_report(response: str):
         """
-        Handles saving reports
+        parses raw AntiVirus's result
         """
         pass
 
