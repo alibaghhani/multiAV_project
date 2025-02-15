@@ -10,3 +10,4 @@ draft.txt
 services/__pycache__/
 celerybeat-schedule.db
 .env
+dump.rdb
