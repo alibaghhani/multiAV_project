@@ -3,9 +3,9 @@ from rest_framework_nested.routers import NestedDefaultRouter
 from .views import ScanFileViewSet, ScanViewSet
 
 router = DefaultRouter()
-router.register(r'file', ScanFileViewSet, basename='file')
+router.register(r'files', ScanFileViewSet, basename='file')
 
-scan_router = NestedDefaultRouter(router, r'file', lookup='file')
+scan_router = NestedDefaultRouter(router, r'files', lookup='file')
 scan_router.register(r'scans', ScanViewSet, basename='file-scans')
 
 urlpatterns = router.urls + scan_router.urls
