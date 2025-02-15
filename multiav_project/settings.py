@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from celery.schedules import crontab
-from services.av_settings import AVS
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -147,7 +147,6 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 
-COUNT_OF_SCANNERS = len(AVS)
 
 CELERY_BEAT_SCHEDULE = {
     'run_upload_task_every_minute': {
@@ -161,3 +160,12 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 RATE_LIMIT_PERIOD_COUNT = 2
+
+AVS = [
+
+    'services.scanners.VirusTotal',
+
+]
+
+
+COUNT_OF_SCANNERS = len(AVS)
