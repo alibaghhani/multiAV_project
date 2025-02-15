@@ -1,13 +1,17 @@
 from types import NoneType
+
+from rest_framework import mixins
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
 from .models import ScanFile, Scan
 from .serializers import ScanFileCreateSerializer, ScanFileRetrieveSerializer, ScanDetailSerializer, ScanListSerializer
 from drf_yasg.utils import swagger_auto_schema
 
-class ScanFileViewSet(ModelViewSet):
+class ScanFileViewSet(mixins.CreateModelMixin,
+                      mixins.RetrieveModelMixin,
+                      GenericViewSet):
     model = ScanFile
     serializer_class = ScanFileCreateSerializer
     queryset = ScanFile.objects.all()
@@ -41,17 +45,6 @@ class ScanFileViewSet(ModelViewSet):
             raise NotFound("object was not found!")
 
 
-    @swagger_auto_schema(auto_schema=None)
-    def destroy(self, request, *args, **kwargs):
-        raise MethodNotAllowed('not allowed')
-
-    @swagger_auto_schema(auto_schema=None)
-    def update(self, request, *args, **kwargs):
-        raise MethodNotAllowed('not allowed')
-
-    @swagger_auto_schema(auto_schema=None)
-    def partial_update(self, request, *args, **kwargs):
-        raise MethodNotAllowed('not allowed')
 
 
 class ScanViewSet(ReadOnlyModelViewSet):
