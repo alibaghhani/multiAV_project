@@ -1,7 +1,7 @@
 from urllib.parse import urlparse, urljoin
 from decouple import config
 from rest_framework import serializers
-
+from core.enums import STATUS
 from core.utilities import calculate_file_hash
 from .models import ScanFile, Scan;from django.db import transaction
 
@@ -50,7 +50,7 @@ class ScanFileRetrieveSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_number_of_scanners(obj):
-        return obj.scan.filter(status=1).count()
+        return obj.scan.filter(status=STATUS.SCANNED.value).count()
 
     @staticmethod
     def get_scanned_with(obj):

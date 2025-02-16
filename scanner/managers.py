@@ -1,6 +1,7 @@
 from core.utilities import calculate_file_hash
 from django.db import models
 from django.conf import settings
+from core.enums import STATUS
 
 
 class ScanFileManager(models.Manager):
@@ -22,7 +23,7 @@ class ScanManager(models.Manager):
         data = []
         for av in settings.AVS:
             data.append({'av_name': av.split('.')[2],
-                         'status': 1,
+                         'status': STATUS.NOT_UPLOADED.value,
                          'file': file_obj})
 
         instances = [self.model(av_name=data_item['av_name'],
