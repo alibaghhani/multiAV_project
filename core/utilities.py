@@ -30,20 +30,6 @@ def get_file_size(file_path: str) -> int:
     return Path(file_path).stat().st_size
 
 
-def request(url, files=None, post: bool = False, **kwargs):
-    """
-    handle request based on its type (post/get)
-
-    """
-    if post:
-        return requests.post(url=url,
-                             files=files,
-                             **kwargs)
-
-    return requests.get(url=url,
-                        **kwargs)
-
-
 
 def get_nested_value(data, route):
     """Access nested dictionary value dynamically using dot notation."""
