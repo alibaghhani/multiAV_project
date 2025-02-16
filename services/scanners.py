@@ -55,10 +55,7 @@ class VirusTotal(AbstractAntivirus):
     def analysis_report(response: dict):
 
 
-
         status = response.get('data', {}).get('status')
-        if not status:
-            raise KeyError("status is missing")
 
         if status == 'queued':
             return None
