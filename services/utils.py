@@ -7,7 +7,7 @@ from scanner.models import Scan
 
 
 @dataclass
-class ScanManager:
+class ScanHelper:
     """
     ScanManager class handles database interactions related to scans.
 
@@ -69,7 +69,7 @@ class ScanManager:
         scan_obj.save()  # Save the updated scan object
 
 
-class FileManager:
+class FileHelper:
     """
     FileManager class handles database interactions related to files.
 

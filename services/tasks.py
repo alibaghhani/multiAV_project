@@ -6,6 +6,7 @@ from core.exceptions import FileUploadError, GetFileResultError
 from .scanners import VirusTotal
 from .utils import ScanManager, FileManager
 
+from .utils import ScanHelper, FileHelper
 
 RATE_LIMIT_PERIOD_COUNT = getattr(settings, "RATE_LIMIT_PERIOD_COUNT", 2)
 
@@ -20,6 +21,7 @@ def upload_file_to_virustotal():
     """
     manager = ScanManager('VirusTotal')
     for scan_obj in manager.get_scan_records(status=1):
+    helper = ScanHelper('VirusTotal')
         try:
             with open(settings.MEDIA_ROOT + scan_obj.file.file.name, 'rb') as file:
                 vt_obj = VirusTotal()
@@ -41,8 +43,8 @@ def get_file_scan_result_virustotal():
     so files must be on a queue to upload
 
     """
-    manager = ScanManager('VirusTotal')
-    file_manager = FileManager()
+    scan_helper = ScanHelper('VirusTotal')
+    file_helper = FileHelper()
 
     for scan_obj in manager.get_scan_records(status=2):
         if scan_obj.status == 2:
