@@ -10,7 +10,7 @@ from core.enums import  STATUS
 RATE_LIMIT_PERIOD_COUNT = getattr(settings, "RATE_LIMIT_PERIOD_COUNT", 2)
 
 
-@shared_task(serializer='json',  rate_limit='2/m')
+@shared_task(serializer='json',  rate_limit='1/m')
 def upload_file_to_virustotal():
     """
     task uploads file to target scanner
@@ -33,7 +33,7 @@ def upload_file_to_virustotal():
             continue
 
 
-@shared_task(serializer='json',  rate_limit='2/m')
+@shared_task(serializer='json',  rate_limit='1/m')
 def get_file_scan_result_virustotal():
     """
     task get file's results from target scanner
