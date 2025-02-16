@@ -4,11 +4,9 @@ from core.exceptions import FileUploadError, GetFileResultError
 from services.abstract import AbstractAntivirus
 
 
-
 class VirusTotal(AbstractAntivirus):
     """
     Antivirus class for VirusTotal service all methods were implemented based on VirusTotal docs
-    # todo: move host to .env
     """
     URL = 'https://www.virustotal.com/api/v3/'
 
@@ -55,31 +53,24 @@ class VirusTotal(AbstractAntivirus):
 
     @staticmethod
     def analysis_report(response: dict):
-        assert isinstance(response, dict), "Response must be a dictionary"
-        assert 'data' in response, "'data' key is missing in response"
 
-        data = response['data']
-        assert isinstance(data, dict), "data must be a dictionary"
 
-        assert 'status' in data, "status key is missing in the 'data'"
-        status = data.get('status')
+
+        status = response.get('data', {}).get('status')
+        if not status:
+            raise KeyError("status is missing")
 
         if status == 'queued':
             return None
 
-        try:
-            attributes = data.get("attributes", {})
-            assert isinstance(attributes, dict), "'attributes' must be a dictionary"
 
-            stats = attributes.get("stats", {})
+        stats = response["data"]["attributes"]["stats"]
+
+        if stats["malicious"] == 0 and stats["suspicious"] == 0:
+            overall_result = 'clean'
+        else:
+            overall_result = 'infected'
+
+        return overall_result, response
 
 
-            if stats["malicious"] == 0 and stats["suspicious"] == 0:
-                overall_result = 'clean'
-            else:
-                overall_result = 'infected'
-
-            return overall_result, response
-
-        except KeyError:
-            return None
