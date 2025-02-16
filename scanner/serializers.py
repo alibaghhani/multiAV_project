@@ -1,5 +1,5 @@
 from urllib.parse import urlparse, urljoin
-
+from decouple import config
 from rest_framework import serializers
 
 from core.utilities import calculate_file_hash
@@ -8,7 +8,6 @@ from .models import ScanFile, Scan;from django.db import transaction
 class ScanFileCreateSerializer(serializers.ModelSerializer):
     file_hash = serializers.SerializerMethodField()
     link = serializers.SerializerMethodField()
-
 
     class Meta:
         model = ScanFile
@@ -36,7 +35,7 @@ class ScanFileCreateSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_link(obj):
-        link = urlparse('http://127.0.0.1:8000/api/file/')
+        link = urlparse(config('HOST') + '/api/files/')
         return urljoin(link.path, f'{obj.sha_256}/')
 
 
