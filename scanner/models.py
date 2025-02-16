@@ -17,15 +17,10 @@ class ScanFile(CommonItems):
 
 class Scan(CommonItems):
 
-    STATUS_CHOICES = (
-        (1, 'NOT_UPLOADED'),
-        (2, 'PENDING'),
-        (3, 'SCANNED'),
-    )
 
     objects = ScanManager()
 
-    status = models.IntegerField(choices=STATUS_CHOICES)
+    status = models.CharField(max_length=50)
     av_name = models.CharField(max_length=255)
     file = models.ForeignKey('ScanFile', on_delete=models.CASCADE, related_name='scan')
     tracking_id = models.CharField(max_length=250,null=True)
