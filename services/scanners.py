@@ -51,8 +51,8 @@ class VirusTotal(AbstractAntivirus):
 
 
 
-    @staticmethod
-    def analysis_report(response: dict):
+
+    def analysis_report(self, response: dict):
 
 
         status = response.get('data', {}).get('status')
@@ -60,8 +60,7 @@ class VirusTotal(AbstractAntivirus):
         if status == 'queued':
             return None
 
-
-        stats = response["data"]["attributes"]["stats"]
+        stats =  self.validator(response, 'data.attributes.stats')
 
         if stats["malicious"] == 0 and stats["suspicious"] == 0:
             overall_result = 'clean'
