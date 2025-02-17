@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from functools import reduce
+
 import requests
 
 
@@ -60,4 +62,28 @@ class AbstractAntivirus(ABC):
         parses raw AntiVirus's result
         """
         pass
+
+    @staticmethod
+    def validator(data: dict, route: str):
+        """Access nested dictionary value dynamically using dot notation.
+        validates keys in response
+        :param data: dict:
+        :param route: str:
+        :return:
+            if key exists --> return key
+            else --> raise key error
+        """
+        keys = route.split('.')
+
+        
+        for key in keys:
+            if key.replace(' ', '') == '':
+                raise ValueError
+
+        try:
+            return reduce(lambda d, key: d[key], keys, data)
+        except KeyError:
+            return None
+
+
 
