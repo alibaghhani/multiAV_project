@@ -54,7 +54,7 @@ def get_file_scan_result_virustotal():
                 scan_helper.update_scan_status(scan_obj=scan_obj, status=STATUS.SCANNED.value, short_result=short_result,
                                            final_result=final_result)
                 file_helper.save_file_result(scan_obj.file)
-            except (KeyError, TypeError):
+            except (ValueError, KeyError):
                 continue
 
         except GetFileResultError:
